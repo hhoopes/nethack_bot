@@ -17,10 +17,12 @@ class MapGenerator
 
   def generate_filled_map
     while filled? == false
-      initial = @map
-      starting_wall_x = Random.rand(0..@x)
-      starting_wall_y = Random.rand(0..@y)
-      @map[starting_wall_y][starting_wall_x] = "|"
+      starting_wall_x, width = Random.rand(0..@x)/2, Random.rand(2..@x)
+      starting_wall_y, height = Random.rand(0..@y), Random.rand(2..@y)
+      byebug
+      width.times do | x_coord |
+        @map[0][starting_wall_x + x_coord] = "|"
+      end
       byebug
       puts stringify
     end
