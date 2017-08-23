@@ -12,7 +12,7 @@ class MapGenerator
     @map = []
     @x = Random.rand(MIN_DIMENSION..MAX_DIMENSION) - 1
     @y = MAX_CHARS/@x - 1
-    @map = Array.new(@y) { Array.new(@x, "#") }
+    @map = Array.new(@y) { Array.new(@x, " ") }
   end
 
   def generate_filled_map
@@ -33,8 +33,9 @@ class MapGenerator
       puts "displaying room with width of #{width}"
       puts "height of #{height}"
       puts "starting x: #{starting_wall_x}, starting wall y: #{starting_wall_y}"
+      add_tunnels
       add_player
-      stringify
+      puts stringify('\n')
     end
   end
 
@@ -52,22 +53,50 @@ class MapGenerator
     @map[player_y][player_x] = "@"
   end
 
+  def add_tunnels
+    random_generate
+  end
+
+  def random_generate(prev_x = nil, prev_y = nil)
+    return if enough_tunnels?
+    if prev_x
+      tunnel_y = Random.rand(prev_y - 1..prev_y + 1)
+      tunnel_x = Random.rand(prev_x - 1..prev_x + 1)
+    else
+      tunnel_y = Random.rand(0..@y) if !tunnel_y
+      tunnel_x = Random.rand(0..@x) if !tunnel_x
+      byebug
+      grab = @map[tunnel_y][tunnel_x]
+    end
+    if grab == ' '
+      @map[tunnel_y][tunnel_x] = '#'
+      random_generate(tunnel_y, tunnel_x)
+    else
+      random_generate
+    end
+  end
+
+  def enough_tunnels?
+    tunnel_spaces = stringify.chars.select {|char| char == '#'}.count
+    tunnel_spaces > 4 && tunnel_spaces < 12
+  end
+
   def valid_player_locations
-    [".", "|", "_"]
+    ['.', '|', '_', '#']
   end
 
   def assign_map_char(y_max:, x_max:, y:, x:)
     if y == y_max - 1 || y == 0
-      "-"
+      '-'
     elsif x == x_max - 1 || x == 0
-      "|"
-    else "."
+      '|'
+    else '.'
     end
   end
 
-  def stringify
-    @map.each do |r|
-      puts r.each { |char| char }.join('')
+  def stringify(break_char = '')
+    @map.inject('') do | acc, row |
+      acc << row.join(break_char)
     end
   end
 
