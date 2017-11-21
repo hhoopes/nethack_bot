@@ -57,11 +57,16 @@ class MapGenerator
     random_generate
   end
 
-  def random_generate(prev_x = nil, prev_y = nil)
+  def random_generate(prev_y: nil, prev_x: nil)
     return if enough_tunnels?
     if prev_x
-      tunnel_y = Random.rand(prev_y - 1..prev_y + 1)
-      tunnel_x = Random.rand(prev_x - 1..prev_x + 1)
+      if prev_x.even?
+        tunnel_y = Random.rand(prev_y - 1..prev_y + 1)
+        tunnel_x = prev_x
+      else
+        tunnel_x = Random.rand(prev_x - 1..prev_x + 1)
+        tunnel_y = prev_y
+      end
     else
       tunnel_y = Random.rand(0..@y)
       tunnel_x = Random.rand(0..@x)
@@ -69,17 +74,15 @@ class MapGenerator
     grab = @map[tunnel_y][tunnel_x]
     if grab == ' '
       @map[tunnel_y][tunnel_x] = '#'
-      random_generate(tunnel_y, tunnel_x)
-    else
-      random_generate
     end
+    random_generate(prev_y: tunnel_y, prev_x: tunnel_x)
   rescue => e
-    random_generate
+    # Address assigning a tunnel outside the boundaries
   end
 
   def enough_tunnels?
     tunnel_spaces = stringify.chars.select {|char| char == '#'}.count
-    tunnel_spaces > 4 && tunnel_spaces < 12
+    tunnel_spaces > 6 && tunnel_spaces < 12
   end
 
   def valid_player_locations
