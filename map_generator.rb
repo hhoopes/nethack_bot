@@ -1,9 +1,9 @@
 require 'byebug'
 
 class MapGenerator
-  MIN_DIMENSION = 7
+  MIN_DIMENSION = 14
   MAX_DIMENSION = 20
-  MAX_CHARS = 140
+  MAX_CHARS = 280
 
   attr_accessor :map
 
@@ -63,17 +63,18 @@ class MapGenerator
       tunnel_y = Random.rand(prev_y - 1..prev_y + 1)
       tunnel_x = Random.rand(prev_x - 1..prev_x + 1)
     else
-      tunnel_y = Random.rand(0..@y) if !tunnel_y
-      tunnel_x = Random.rand(0..@x) if !tunnel_x
-      byebug
-      grab = @map[tunnel_y][tunnel_x]
+      tunnel_y = Random.rand(0..@y)
+      tunnel_x = Random.rand(0..@x)
     end
+    grab = @map[tunnel_y][tunnel_x]
     if grab == ' '
       @map[tunnel_y][tunnel_x] = '#'
       random_generate(tunnel_y, tunnel_x)
     else
       random_generate
     end
+  rescue => e
+    random_generate
   end
 
   def enough_tunnels?
@@ -94,9 +95,10 @@ class MapGenerator
     end
   end
 
-  def stringify(break_char = '')
-    @map.inject('') do | acc, row |
-      acc << row.join(break_char)
+  def stringify(break_char = "")
+    map = @map.inject('') do | acc, row |
+      string_row = row.join << break_char
+      acc << string_row
     end
   end
 
@@ -115,4 +117,4 @@ class MapGenerator
 end
 
 m = MapGenerator.new
-puts m.generate_filled_map
+m.generate_filled_map
