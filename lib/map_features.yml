@@ -1,0 +1,33 @@
+structural:
+  player:
+    char: ['.', '|', '_', '#']
+  tunnel:
+    min: 4
+    max: 12
+    char: '#'
+  door:
+    min: 1
+    max: 5
+    char: '+'
+  vertical_wall:
+    char: '|'
+  horizontal_wall:
+    char: '_'
+  trap:
+    char: ^
+    min: 0
+    max: 2
+    proximity: 2
+    flavor:
+      - You feel a dart.
+      - You feel dizzy.
+      - You hear a stirring.
+monster:
+  - dragon:
+      flavor: You feel a singe of fire.
+      colors:
+        - gold
+        - blue
+        - white
+      char: D
+      proximity: 10
