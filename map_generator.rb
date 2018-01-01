@@ -97,15 +97,18 @@ class MapGenerator
   def add_doors
     @door_count.times do
       char = ''
-      until char == '|' || char == '_'
+      until char == '|' || char == '-'
         door_y = Random.rand(0..@y - 1)
         door_x = Random.rand(0..@x - 1)
         char = @map[door_y][door_x]
-        if char  == '|' || char == '_'
-          door_char = door_y.even? ? ' ' : '+'
-          @map[door_y][door_x] =  door_char
-        end
       end
+      door_char = case char
+      when '|'
+        door_y.even? ? '-' : '+'
+      when '-'
+        door_y.even? ? '|' : '+'
+      end
+      @map[door_y][door_x] = door_char if door_char
     end
   end
 
@@ -119,7 +122,7 @@ class MapGenerator
         char = @map[trap_y][trap_x]
         if char  == '.' || char == '#'
           @map[trap_y][trap_x] = '^'
-          save_flavor_text(:trap) if in_proximity?(:trap, [trap_y, trap_x])
+          # save_flavor_text(:trap) if in_proximity?(:trap, [trap_y, trap_x])
         end
       end
     end

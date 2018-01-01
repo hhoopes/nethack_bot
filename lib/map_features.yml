@@ -1,6 +1,6 @@
 structural:
   player:
-    char: ['.', '|', '_', '#']
+    char: ['.', '|', '-', '#']
   tunnel:
     min: 4
     max: 12
@@ -12,16 +12,11 @@ structural:
   vertical_wall:
     char: '|'
   horizontal_wall:
-    char: '_'
+    char: '-'
   trap:
     char: ^
     min: 0
     max: 2
-    proximity: 2
-    flavor:
-      - You feel a dart.
-      - You feel dizzy.
-      - You hear a stirring.
 monster:
   - dragon:
       flavor: You feel a singe of fire.
