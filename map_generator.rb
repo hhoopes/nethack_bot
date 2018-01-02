@@ -9,9 +9,10 @@ class MapGenerator
   MAX_CHARS = 280
   yaml = File.read('lib/map_features.yml')
   FEATURES = JSON.parse(YAML.load(yaml).to_json, object_class: OpenStruct)
-  # FEATURES = OpenStruct.new(yaml)
+  yaml = File.read('lib/messages.yml')
+  MESSAGES = JSON.parse(YAML.load(yaml).to_json, object_class: OpenStruct)
+  FEATURE_MODIFER = 8
   attr_accessor :map
-
 
   def initialize(caption = false)
     @caption = caption
@@ -20,7 +21,6 @@ class MapGenerator
     @tunnel_count = Random.rand(FEATURES.structural.tunnel.min..FEATURES.structural.tunnel.max)
     @door_count = Random.rand(FEATURES.structural.door.min..FEATURES.structural.door.max)
     @map = Array.new(@y) { Array.new(@x, " ") }
-    @flavor = []
     @locations = {}
   end
 
@@ -29,8 +29,10 @@ class MapGenerator
     add_tunnels
     add_doors
     add_player
-    add_traps
+    @flavor = populate_messages
+    add_optional_features
     add_monsters
+    puts @flavor
     puts stringify("\n")
   end
 
@@ -38,18 +40,18 @@ class MapGenerator
 
   def add_room
     starting_wall_x = Random.rand(0..@x)/2
-    width = Random.rand(4..(@x - starting_wall_x))
+    @width = Random.rand(4..(@x - starting_wall_x))
     starting_wall_y = Random.rand(0..@y)/2
-    height = Random.rand(4..(@y - starting_wall_y))
-    height.times do | y_coord |
-      width.times do | x_coord |
-        assigned_char = assign_map_char(y_max: height, x_max: width, y: y_coord, x: x_coord)
+    @height = Random.rand(4..(@y - starting_wall_y))
+    @height.times do | y_coord |
+      @width.times do | x_coord |
+        assigned_char = assign_map_char(y_max: @height, x_max: @width, y: y_coord, x: x_coord)
         @map[starting_wall_y + y_coord][starting_wall_x + x_coord] = assigned_char
       end
     end
     puts "Overall map size X: #{@x} Y: #{@y}"
-    puts "displaying room with width of #{width}"
-    puts "height of #{height}"
+    puts "displaying room with width of #{@width}"
+    puts "height of #{@height}"
     puts "starting x: #{starting_wall_x}, starting wall y: #{starting_wall_y}"
   end
 
@@ -57,13 +59,14 @@ class MapGenerator
     map_char = nil
     player_x = nil
     player_y = nil
-    until FEATURES.structural.player.char.include? map_char
+    until FEATURES.player.char.include? map_char
       player_y = Random.rand(0...@y)
       player_x = Random.rand(0...@x)
       map_char = @map[player_y][player_x]
     end
     @map[player_y][player_x] = "@"
     @locations[:player] = [player_y, player_x]
+    @locations[:player_location_type] = map_char
   end
 
   def add_tunnels(prev_y: nil, prev_x: nil)
@@ -86,7 +89,7 @@ class MapGenerator
     end
     add_tunnels(prev_y: tunnel_y, prev_x: tunnel_x)
   rescue => e
-    # Address assigning a tunnel outside the boundaries
+    # TODO Address assigning a tunnel outside the boundaries
   end
 
   def enough_tunnels?
@@ -112,20 +115,35 @@ class MapGenerator
     end
   end
 
-  def add_traps
-    trap_count = Random.rand(FEATURES.structural.trap.min..FEATURES.structural.trap.max)
-    trap_count.times do
-      char = ''
-      until char == '.' || char == '#'
-        trap_y = Random.rand(0..@y - 1)
-        trap_x = Random.rand(0..@x - 1)
-        char = @map[trap_y][trap_x]
-        if char  == '.' || char == '#'
-          @map[trap_y][trap_x] = '^'
-          # save_flavor_text(:trap) if in_proximity?(:trap, [trap_y, trap_x])
+  def add_optional_features
+    puts "width:" + @width.to_s
+    puts "height:" + @height.to_s
+    puts max_feature_count.to_s
+    feature_count = 0
+
+    optional_feature_types.each do |type|
+      break if feature_count >= max_feature_count
+      type_count = Random.rand(FEATURES.optional.send(type).min..FEATURES.optional.send(type).max)
+      type_count.times do
+        char = ''
+        until char == '.'
+          feature_y = Random.rand(0..@y - 1)
+          feature_x = Random.rand(0..@x - 1)
+          char = @map[feature_y][feature_x]
         end
+        @map[feature_y][feature_x] = FEATURES.optional.send(type).char
+        feature_count += 1
+        break if feature_count >= max_feature_count
       end
     end
+  end
+
+  def optional_feature_types
+    FEATURES.optional.marshal_dump.keys.shuffle
+  end
+
+  def max_feature_count
+    (@width + @height)/FEATURE_MODIFER
   end
 
   def add_monsters
@@ -144,7 +162,6 @@ class MapGenerator
     puts "diff #{diff}"
     diff <= modifier
   rescue => e
-    byebug
   end
 
   def save_flavor_text(type)
@@ -170,6 +187,18 @@ class MapGenerator
     end
   end
 
+  def populate_messages
+    message_type = message_types.shuffle.first
+    MESSAGES.send(message_type).text.sample if appropriate_location?(message_type)
+  end
+
+  def appropriate_location?(type)
+    (MESSAGES.send(type).room_only && @locations[:player_location_type] == '.') || !MESSAGES.send(type).room_only
+  end
+
+  def message_types
+    MESSAGES.marshal_dump.keys
+  end
 end
 
 m = MapGenerator.new

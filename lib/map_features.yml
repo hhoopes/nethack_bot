@@ -1,6 +1,6 @@
+player:
+  char: ['.', '#']
 structural:
-  player:
-    char: ['.', '|', '-', '#']
   tunnel:
     min: 4
     max: 12
@@ -8,21 +8,85 @@ structural:
   door:
     min: 1
     max: 5
-    char: '+'
+    char: ['+', '|', '-']
   vertical_wall:
     char: '|'
   horizontal_wall:
     char: '-'
+optional:
   trap:
     char: ^
     min: 0
     max: 2
-monster:
-  - dragon:
-      flavor: You feel a singe of fire.
-      colors:
-        - gold
-        - blue
-        - white
-      char: D
-      proximity: 10
+  throne:
+    char: \
+    min: 0
+    max: 1
+  fountain:
+    char: '{'
+    min: 0
+    max: 1
+  altar:
+    char: _
+    min: 0
+    max: 1
+  headstone:
+    char: |
+    min: 0
+    max: 1
+  upstair:
+    char: <
+    min: 0
+    max: 1
+  amulet:
+    char: '"'
+    min: 0
+    max: 1
+  weapon:
+    char: <
+    min: 0
+    max: 1
+  armor:
+    char: )
+    min: 0
+    max: 1
+  potion:
+    char: !
+    min: 0
+    max: 1
+  scroll:
+    char: "?"
+    min: 0
+    max: 1
+  wand:
+    char: /
+    min: 0
+    max: 1
+  ring:
+    char: =
+    min: 0
+    max: 1
+  spellbook:
+    char: +
+    min: 0
+    max: 1
+  gem:
+    char: "*"
+    min: 0
+    max: 1
+  tool:
+    char: (
+    min: 0
+    max: 1
+  statue:
+    char: "`"
+    min: 0
+    max: 1
+  coins:
+    char: $
+    min: 0
+    max: 1
+  comestibles:
+    char: "%"
+    min: 0
+    max: 1

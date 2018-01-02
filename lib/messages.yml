@@ -1,0 +1,79 @@
+trap:
+  room_only: true
+  text:
+    - You feel that monsters are aware of your presence.
+    - You feel totally together, man.
+    - You feel healthy.
+    - An arrow shoots out at you!
+    - A little dart shoots out at you!
+    - You hear a soft click.
+    - A tower of flame erupts from the floor!
+    - There's a gaping hole under you!
+    - You shudder for a moment.
+    - You feel momentarily different.
+    - Click! You trigger a rolling boulder trap!
+    - You feel a wrenching sensation.
+    - You are caught in a magical explosion! Your body absorbs some of the magical energy!
+    - You are momentarily blinded by a flash of light!
+    - You see a flash of light!
+    - You hear a deafening roar!
+    - You feel rankled.
+    - A tower of flame erupts from the floor!
+    - You hear distant howling.
+    - You suddenly yearn for your distant homeland.
+    - A shiver runs up and down your spine!
+    - Your pack shakes violently!
+    - You smell charred flesh.
+    - You feel tired.
+    - You suddenly yearn for your nearby homeland.
+    - You feel oddly like the prodigal son.
+    - You hear the moon howling at you.
+    - You suddenly yearn for Cleveland.
+    - You smell hamburgers.
+    - You feel charismatic!
+    - You feel like someone is helping you.
+throne:
+  room_only: true
+  text:
+    - You feel somehow out of place...
+    - You feel very comfortable here.
+    - You feel your luck is changing.
+    - 'A voice echoes: "By thy Imperious order Dame..."'
+    - 'A voice echoes: "By thy Imperious order Sire..."'
+    - You are granted an insight.
+    - You feel much, much better!
+    - Your vision becomes clear.
+    - An image forms in your mind.
+    - A terrible drone fills your head!
+    - An electric shock shoots through your body!
+    - A massive electric shock shoots through your body!
+    - You notice you have no gold!
+    - You feel a strange sensation.
+    - Thy audience hath been summoned, Sire!
+    - A curse upon thee for sitting upon this most holy throne!
+    - You feel threatened.
+    - You feel a wrenching sensation.
+sink:
+  room_only: true
+  text:
+    - You take a sip of very hot water.
+    - You take a sip of cold water.
+    - You take a sip of warm water.
+    - You hear clanking from the pipes...
+    - You hear snatches of song from among the sewers...
+    - From the murky drain, a hand reaches up... --oops--
+    - You take a sip of scalding hot water.
+    - You take a sip of scalding hot water. It seems quite tasty.
+    - Eek! There's a sewer rat in the sink!
+    - Eek! There's something squirmy in the sink!
+    - Sewer rats are genocided or extinctThe sink seems quite dirty.
+    - Some odd liquid flows from the faucet.
+    - You find a ring in the sink!
+    - Some dirty water backs up in the drain.
+    - The pipes break! Water spurts out!
+    - The water moves as though of its own will!
+    - The water moves as though of its own will! But it quiets down.
+    - Yuk, this water tastes awful.
+    - Gaggg... this tastes like sewage! You vomit.
+    - This water contains toxic wastes! You undergo a freakish metamorphosis!
+    - This water contains toxic wastes!
