@@ -1,6 +1,7 @@
 require 'byebug'
 require './lib/twitter/client'
 require './map_generator'
+require './lib/nethack/message'
 require 'figaro'
 Figaro.application = Figaro::Application.new(environment: 'production', path: File.expand_path('../config/application.yml', __FILE__))
 Figaro.load
@@ -17,11 +18,24 @@ class NethackBot
     end
   end
 
-  def self.on_follow
-
+  def self.stream
+    streaming_client.user do |object|
+      case object
+      when Twitter::Tweet
+      when Twitter::Streaming::Event
+        return unless object.name == :follow
+        message = Message.follow_message(object)
+      when Twitter::DirectMessage
+      end
+    end
   end
 
   private
+
+  def follow_message(stream_object)
+    screen_name = stream_object.source.screen_name
+    "#{screen_name}\n" << FollowMessage.generate(screen_name)
+  end
 
   def timeline
     client.mentions_timeline(timeline_options)
@@ -31,4 +45,4 @@ class NethackBot
   end
 end
 
-NethackBot.new_tweet
+NethackBot.stream
