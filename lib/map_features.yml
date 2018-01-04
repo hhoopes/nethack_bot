@@ -1,92 +1,102 @@
 player:
-  char: ['.', '#']
+  char: "\uFF20"
+  valid_char: ["\uFF0E", "\uFF03"]
 structural:
+  empty_space:
+    char: "\u00A0"
+  ground:
+    char: "\uFF0E"
   tunnel:
     min: 4
     max: 12
-    char: '#'
+    char: "\u0023"
   door:
     min: 1
     max: 5
-    char: ['+', '|', '-']
+    horizontal:
+      char: "\uFF5C"
+    vertical:
+      char: "\uFF0D" 
+    closed:
+      char: "\uFF0B" 
   vertical_wall:
-    char: '|'
+    char: "\uFF5C"
   horizontal_wall:
-    char: '-'
+    char: "\uFF0D"
 optional:
   trap:
-    char: ^
+    char: "\uFF3E"
     min: 0
     max: 2
   throne:
-    char: \
+    char: "\uFF3C" 
     min: 0
     max: 1
   fountain:
-    char: '{'
+    char: "\uFF5B"
     min: 0
     max: 1
   altar:
-    char: _
+    char: "\uFF3F"
     min: 0
     max: 1
   headstone:
-    char: |
+    char: "\uFF5C"
     min: 0
     max: 1
   upstair:
-    char: <
+    char: "\uFF1E"
+    min: 0
+    max: 1
+  downstair:
+    char: "\uFF1C"
     min: 0
     max: 1
   amulet:
-    char: '"'
+    char: "\uFF02"
     min: 0
     max: 1
   weapon:
-    char: <
+    char: "\uFF09"
     min: 0
     max: 1
   armor:
-    char: )
+    char: "\uFF3B"
     min: 0
     max: 1
   potion:
-    char: !
+    char: "\uFF01"
     min: 0
     max: 1
   scroll:
-    char: "?"
+    char: "\uFF1F"
     min: 0
     max: 1
   wand:
-    char: /
+    char: "\uFF0F"
     min: 0
     max: 1
   ring:
-    char: =
+    char: "\uFF1D"
     min: 0
     max: 1
   spellbook:
-    char: +
+    char: "\uFF0B"
     min: 0
     max: 1
   gem:
-    char: "*"
+    char: "\uFF0A"
     min: 0
     max: 1
   tool:
-    char: (
-    min: 0
-    max: 1
-  statue:
-    char: "`"
+    char: "\uFF08"
     min: 0
     max: 1
   coins:
-    char: $
+    char: "\uFF04"
     min: 0
     max: 1
   comestibles:
-    char: "%"
+    char: "\uFF05"
     min: 0
     max: 1

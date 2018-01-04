@@ -4,9 +4,9 @@ require 'ostruct'
 require 'json'
 
 class MapGenerator
-  MIN_DIMENSION = 14
+  MIN_DIMENSION = 10
   MAX_DIMENSION = 20
-  MAX_CHARS = 280
+  MAX_CHARS = 200
   yaml = File.read('lib/map_features.yml')
   FEATURES = JSON.parse(YAML.load(yaml).to_json, object_class: OpenStruct)
   yaml = File.read('lib/messages.yml')
@@ -20,7 +20,7 @@ class MapGenerator
     @y = MAX_CHARS/@x - 1
     @tunnel_count = Random.rand(FEATURES.structural.tunnel.min..FEATURES.structural.tunnel.max)
     @door_count = Random.rand(FEATURES.structural.door.min..FEATURES.structural.door.max)
-    @map = Array.new(@y) { Array.new(@x, " ") }
+    @map = Array.new(@y) { Array.new(@x, FEATURES.structural.empty_space.char) }
     @locations = {}
   end
 
@@ -59,12 +59,12 @@ class MapGenerator
     map_char = nil
     player_x = nil
     player_y = nil
-    until FEATURES.player.char.include? map_char
+    until FEATURES.player.valid_char.include? map_char
       player_y = Random.rand(0...@y)
       player_x = Random.rand(0...@x)
       map_char = @map[player_y][player_x]
     end
-    @map[player_y][player_x] = "@"
+    @map[player_y][player_x] = FEATURES.player.char
     @locations[:player] = [player_y, player_x]
     @locations[:player_location_type] = map_char
   end
@@ -84,8 +84,8 @@ class MapGenerator
       tunnel_x = Random.rand(0..@x - 1 )
     end
     grab = @map[tunnel_y][tunnel_x]
-    if grab == ' ' && @map[tunnel_y][tunnel_x]
-      @map[tunnel_y][tunnel_x] = '#'
+    if grab == FEATURES.structural.empty_space.char && @map[tunnel_y][tunnel_x]
+      @map[tunnel_y][tunnel_x] = FEATURES.structural.tunnel.char
     end
     add_tunnels(prev_y: tunnel_y, prev_x: tunnel_x)
   rescue => e
@@ -93,26 +93,42 @@ class MapGenerator
   end
 
   def enough_tunnels?
-    tunnel_spaces = stringify.chars.select {|char| char == '#'}.count
+    tunnel_spaces = stringify.chars.select {|char| char == FEATURES.structural.tunnel.char}.count
     tunnel_spaces >= @tunnel_count
   end
 
   def add_doors
     @door_count.times do
       char = ''
-      until char == '|' || char == '-'
+      until wall_char?(char)
         door_y = Random.rand(0..@y - 1)
         door_x = Random.rand(0..@x - 1)
         char = @map[door_y][door_x]
       end
       door_char = case char
-      when '|'
-        door_y.even? ? '-' : '+'
-      when '-'
-        door_y.even? ? '|' : '+'
+      when FEATURES.structural.vertical_wall.char
+        door_y.even? ? vertical_door : closed_door
+      when FEATURES.structural.horizontal_wall.char
+        door_y.even? ? horizontal_door : closed_door
       end
       @map[door_y][door_x] = door_char if door_char
     end
+  end
+
+  def horizontal_door
+    FEATURES.structural.door.horizontal.char
+  end
+
+  def vertical_door
+    FEATURES.structural.door.vertical.char
+  end
+
+  def closed_door
+    FEATURES.structural.door.closed.char
+  end
+
+  def wall_char?(char)
+    char == FEATURES.structural.vertical_wall.char || char == FEATURES.structural.horizontal_wall.char
   end
 
   def add_optional_features
@@ -126,7 +142,7 @@ class MapGenerator
       type_count = Random.rand(FEATURES.optional.send(type).min..FEATURES.optional.send(type).max)
       type_count.times do
         char = ''
-        until char == '.'
+        until char == FEATURES.structural.ground.char
           feature_y = Random.rand(0..@y - 1)
           feature_x = Random.rand(0..@x - 1)
           char = @map[feature_y][feature_x]
@@ -173,10 +189,11 @@ class MapGenerator
 
   def assign_map_char(y_max:, x_max:, y:, x:)
     if y == y_max - 1 || y == 0
-      '-'
+      FEATURES.structural.horizontal_wall.char
     elsif x == x_max - 1 || x == 0
-      '|'
-    else '.'
+      FEATURES.structural.vertical_wall.char
+    else
+      FEATURES.structural.ground.char
     end
   end
 
@@ -193,7 +210,7 @@ class MapGenerator
   end
 
   def appropriate_location?(type)
-    (MESSAGES.send(type).room_only && @locations[:player_location_type] == '.') || !MESSAGES.send(type).room_only
+    (MESSAGES.send(type).room_only && @locations[:player_location_type] == FEATURES.structural.ground.char) || !MESSAGES.send(type).room_only
   end
 
   def message_types
