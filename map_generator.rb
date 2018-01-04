@@ -32,8 +32,7 @@ class MapGenerator
     @flavor = populate_messages
     add_optional_features
     add_monsters
-    puts @flavor
-    puts stringify("\n")
+    @flavor << stringify("\n")
   end
 
   private
@@ -206,7 +205,7 @@ class MapGenerator
 
   def populate_messages
     message_type = message_types.shuffle.first
-    MESSAGES.send(message_type).text.sample if appropriate_location?(message_type)
+    MESSAGES.send(message_type).text.sample + "\n\n" if appropriate_location?(message_type)
   end
 
   def appropriate_location?(type)

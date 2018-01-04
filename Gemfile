@@ -1,4 +1,6 @@
 source 'https://rubygems.org'
 
-require 'minitest'
-require 'byebug'
+gem 'minitest'
+gem 'byebug'
+gem 'figaro'
+gem 'twitter'
