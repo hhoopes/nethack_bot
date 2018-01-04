@@ -7,9 +7,9 @@ class MapGenerator
   MIN_DIMENSION = 10
   MAX_DIMENSION = 20
   MAX_CHARS = 200
-  yaml = File.read('lib/map_features.yml')
+  yaml = File.read('data/nethack/map_features.yml')
   FEATURES = JSON.parse(YAML.load(yaml).to_json, object_class: OpenStruct)
-  yaml = File.read('lib/messages.yml')
+  yaml = File.read('data/nethack/messages.yml')
   MESSAGES = JSON.parse(YAML.load(yaml).to_json, object_class: OpenStruct)
   FEATURE_MODIFER = 8
   attr_accessor :map
@@ -29,10 +29,9 @@ class MapGenerator
     add_tunnels
     add_doors
     add_player
-    @flavor = populate_messages
     add_optional_features
     add_monsters
-    @flavor << stringify("\n")
+    populate_messages << map_to_string("\n")
   end
 
   private
@@ -48,6 +47,7 @@ class MapGenerator
         @map[starting_wall_y + y_coord][starting_wall_x + x_coord] = assigned_char
       end
     end
+    puts "Creating a new room"
     puts "Overall map size X: #{@x} Y: #{@y}"
     puts "displaying room with width of #{@width}"
     puts "height of #{@height}"
@@ -92,7 +92,7 @@ class MapGenerator
   end
 
   def enough_tunnels?
-    tunnel_spaces = stringify.chars.select {|char| char == FEATURES.structural.tunnel.char}.count
+    tunnel_spaces = map_to_string.chars.select {|char| char == FEATURES.structural.tunnel.char}.count
     tunnel_spaces >= @tunnel_count
   end
 
@@ -193,6 +193,13 @@ class MapGenerator
       FEATURES.structural.vertical_wall.char
     else
       FEATURES.structural.ground.char
+    end
+  end
+
+  def map_to_string(break_char = "")
+    map = @map.inject('') do | acc, row |
+      string_row = row.join << break_char
+      acc << string_row
     end
   end
 
